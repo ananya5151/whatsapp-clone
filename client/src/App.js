@@ -5,11 +5,12 @@ import io from 'socket.io-client';
 import { format, isToday, isYesterday } from 'date-fns';
 import './App.css';
 
-// Configure URLs for API and WebSocket
-// For deployment, these will be relative paths, but for development, they point to your local server.
-const API_BASE = process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:5000/api';
-const SOCKET_URL = process.env.NODE_ENV === 'production' ? '/' : 'http://localhost:5000';
+// Your live Render backend URL
+const RENDER_BACKEND_URL = "https://whatsapp-clone-88mx.onrender.com";
 
+// Configure URLs for API and WebSocket
+const API_BASE = process.env.NODE_ENV === 'production' ? `${RENDER_BACKEND_URL}/api` : 'http://localhost:5000/api';
+const SOCKET_URL = process.env.NODE_ENV === 'production' ? RENDER_BACKEND_URL : 'http://localhost:5000';
 const App = () => {
   const [socket, setSocket] = useState(null);
   const [conversations, setConversations] = useState([]);

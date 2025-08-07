@@ -8,8 +8,8 @@ const cors = require('cors');
 const app = express();
 const server = http.createServer(app);
 
-// Your live Vercel frontend URL
-const clientURL = "https://whatsapp-clone-eight-liart.vercel.app";
+// Your latest live Vercel frontend URL from the error log
+const clientURL = "https://whatsapp-clone-fiqg4p7fw-ananya-vermas-projects-980a5723.vercel.app";
 
 // Initialize Socket.IO and configure CORS for it
 const io = new Server(server, {

@@ -3,6 +3,8 @@ const Message = require('../models/Message');
 
 // Get all unique conversations (latest message for each user)
 exports.getConversations = async (req, res) => {
+    // ### DEBUG LOG 1: Check if the API endpoint is reached ###
+    console.log('API Endpoint /api/conversations reached.');
     try {
         const conversations = await Message.aggregate([
             { $sort: { timestamp: -1 } },
@@ -13,17 +15,18 @@ exports.getConversations = async (req, res) => {
                     lastMessage: { $first: "$body" },
                     lastMessageTimestamp: { $first: "$timestamp" },
                     unreadCount: {
-                        $sum: {
-                            $cond: [{ $and: [{ $eq: ["$status", "delivered"] }, { $eq: ["$from_me", false] }] }, 1, 0]
-                        }
+                        $sum: { $cond: [{ $and: [{ $eq: ["$status", "delivered"] }, { $eq: ["$from_me", false] }] }, 1, 0] }
                     }
                 }
             },
             { $sort: { lastMessageTimestamp: -1 } }
         ]);
+        // ### DEBUG LOG 2: Check if data was fetched successfully ###
+        console.log(`Successfully fetched ${conversations.length} conversations from database.`);
         res.json(conversations);
     } catch (err) {
-        console.error(err.message);
+        // ### DEBUG LOG 3: Log any errors during the database query ###
+        console.error('Error in getConversations controller:', err.message);
         res.status(500).send('Server Error');
     }
 };
@@ -54,7 +57,7 @@ exports.sendMessage = async (req, res) => {
         });
         await newMessage.save();
 
-        // *** REAL-TIME MAGIC: Emit the new message to all clients ***
+        // REAL-TIME MAGIC: Emit the new message to all clients
         req.io.emit('newMessage', newMessage);
         // Also emit an update for the conversation list
         req.io.emit('updateConversation', {

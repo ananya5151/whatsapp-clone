@@ -77,13 +77,27 @@ const App = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const fetchConversations = async () => {
+  // In client/src/App.js, replace the existing fetchConversations function
+
+const fetchConversations = async () => {
+    setLoading(true);
+    console.log('Frontend: Attempting to fetch conversations...');
     try {
       const response = await axios.get(`${API_BASE}/conversations`);
-      setConversations(response.data);
-      setLoading(false);
+      console.log('Frontend: API call successful. Response:', response);
+
+      // IMPORTANT: Check if the response data is actually an array
+      if (Array.isArray(response.data)) {
+        setConversations(response.data);
+      } else {
+        console.error('Frontend Error: Data received from API is not an array!', response.data);
+        setConversations([]); // Set to empty array to prevent crash
+      }
+
     } catch (error) {
-      console.error('Error fetching conversations:', error);
+      console.error('Frontend: API call failed!', error.response || error);
+      setConversations([]); // Set to empty array on error to prevent crash
+    } finally {
       setLoading(false);
     }
   };

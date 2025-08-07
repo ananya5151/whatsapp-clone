@@ -6,8 +6,8 @@ A full-stack WhatsApp Web clone built with the MERN stack (MongoDB, Express, Rea
 
 ## 🌐 Live Demo
 
-* **Frontend (Vercel):** **[https://whatsapp-clone-73zzeguhx-ananya-vermas-projects-980a5723.vercel.app/](https://whatsapp-clone-eight-liart.vercel.app/)**
-* **Backend API (Render):** **[https://whatsapp-clone-88mx.onrender.com/](https://whatsapp-clone-88mx.onrender.com/)**
+* **Frontend (Vercel):** **[LIVE DEMO](https://whatsapp-clone-eight-liart.vercel.app/)**
+* **Backend API (Render):** **[BACKEND](https://whatsapp-clone-88mx.onrender.com/)**
 
 
 <img width="1915" height="998" alt="Screenshot 2025-08-08 022340" src="https://github.com/user-attachments/assets/4de9a07c-f892-4d5b-8806-50b1f8ef84a7" />
@@ -82,3 +82,4 @@ A full-stack WhatsApp Web clone built with the MERN stack (MongoDB, Express, Rea
       ```
 
 The application will be available at `http://localhost:3000`.
+

@@ -8,13 +8,10 @@ const cors = require('cors');
 const app = express();
 const server = http.createServer(app);
 
-// Your latest live Vercel frontend URL from the error log
-const clientURL = "https://whatsapp-clone-fiqg4p7fw-ananya-vermas-projects-980a5723.vercel.app";
-
-// Initialize Socket.IO and configure CORS for it
+// Initialize Socket.IO and allow all origins
 const io = new Server(server, {
   cors: {
-    origin: [clientURL, "http://localhost:3000"], // Allow Vercel and local dev
+    origin: "*", // Allow any origin
     methods: ["GET", "POST"]
   }
 });
@@ -23,7 +20,7 @@ const io = new Server(server, {
 connectDB();
 
 // Init Middleware
-app.use(cors({ origin: [clientURL, "http://localhost:3000"] })); // Allow Express requests
+app.use(cors()); // Allow any origin for Express API calls
 app.use(express.json());
 
 // Make the io instance available to your routes

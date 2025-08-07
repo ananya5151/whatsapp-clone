@@ -4,7 +4,6 @@ const Message = require('../models/Message');
 // Get all unique conversations (latest message for each user)
 exports.getConversations = async (req, res) => {
     try {
-        // This is a complex query to get the last message for each conversation
         const conversations = await Message.aggregate([
             { $sort: { timestamp: -1 } },
             {
@@ -13,7 +12,7 @@ exports.getConversations = async (req, res) => {
                     name: { $first: "$name" },
                     lastMessage: { $first: "$body" },
                     lastMessageTimestamp: { $first: "$timestamp" },
-                    unreadCount: { // Advanced: Count unread messages
+                    unreadCount: {
                         $sum: {
                             $cond: [{ $and: [{ $eq: ["$status", "delivered"] }, { $eq: ["$from_me", false] }] }, 1, 0]
                         }
@@ -24,6 +23,7 @@ exports.getConversations = async (req, res) => {
         ]);
         res.json(conversations);
     } catch (err) {
+        console.error(err.message);
         res.status(500).send('Server Error');
     }
 };
@@ -34,6 +34,7 @@ exports.getMessagesByWaId = async (req, res) => {
         const messages = await Message.find({ wa_id: req.params.wa_id }).sort({ timestamp: 'asc' });
         res.json(messages);
     } catch (err) {
+        console.error(err.message);
         res.status(500).send('Server Error');
     }
 };
@@ -46,14 +47,26 @@ exports.sendMessage = async (req, res) => {
             wa_id,
             name,
             body,
-            message_id: `demo_${new Date().getTime()}`, // Generate a unique demo ID
+            message_id: `demo_${new Date().getTime()}`,
             from_me: true,
             timestamp: new Date(),
-            status: 'sent' // Initially 'sent'
+            status: 'sent'
         });
         await newMessage.save();
+
+        // *** REAL-TIME MAGIC: Emit the new message to all clients ***
+        req.io.emit('newMessage', newMessage);
+        // Also emit an update for the conversation list
+        req.io.emit('updateConversation', {
+             _id: wa_id,
+             name: name,
+             lastMessage: body,
+             lastMessageTimestamp: newMessage.timestamp,
+        });
+
         res.status(201).json(newMessage);
     } catch (err) {
+        console.error(err.message);
         res.status(500).send('Server Error');
     }
 };
